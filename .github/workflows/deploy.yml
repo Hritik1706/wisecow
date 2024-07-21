@@ -55,10 +55,16 @@ jobs:
         sudo sh get-docker.sh
         rm get-docker.sh
 
+    - name: Install Go
+      run: |
+        curl -LO https://golang.org/dl/go1.22.linux-amd64.tar.gz
+        sudo tar -C /usr/local -xzf go1.22.linux-amd64.tar.gz
+        rm go1.22.linux-amd64.tar.gz
+        echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
+
     - name: Install cri-dockerd
       run: |
-        sudo apt-get update
-        sudo apt-get install -y golang-go
+        export PATH=$PATH:/usr/local/go/bin
         git clone https://github.com/Mirantis/cri-dockerd.git
         cd cri-dockerd
         mkdir bin
