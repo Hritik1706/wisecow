@@ -1,10 +1,12 @@
 FROM ubuntu:latest
 
+ENV PATH="/usr/games:${PATH}"
+
 WORKDIR /app
 
 COPY . .
 
-RUN apt update && apt install -y fortune-mod cowsay
+RUN apt-get update && apt-get install -y fortune-mod cowsay netcat-openbsd
 
 RUN chmod 755 wisecow.sh
 
