@@ -49,6 +49,20 @@ jobs:
         sudo tar zxvf crictl-v1.30.0-linux-amd64.tar.gz -C /usr/local/bin
         rm crictl-v1.30.0-linux-amd64.tar.gz
 
+    - name: Install cri-dockerd
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository ppa:docker-ce/stable
+        sudo apt-get update
+        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+        sudo mkdir -p /etc/systemd/system/cri-docker.socket.d
+        curl -LO https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.0/cri-dockerd_0.3.0_amd64.deb
+        sudo dpkg -i cri-dockerd_0.3.0_amd64.deb
+        sudo systemctl start cri-docker
+        sudo systemctl enable cri-docker
+        rm cri-dockerd_0.3.0_amd64.deb
+
     - name: Start Minikube
       run: |
         sudo minikube start --driver=none
