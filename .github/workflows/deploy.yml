@@ -49,23 +49,34 @@ jobs:
         sudo tar zxvf crictl-v1.30.0-linux-amd64.tar.gz -C /usr/local/bin
         rm crictl-v1.30.0-linux-amd64.tar.gz
 
+    - name: Install Docker
+      run: |
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
+        rm get-docker.sh
+
     - name: Install cri-dockerd
       run: |
         sudo apt-get update
-        sudo apt-get install -y software-properties-common
-        sudo add-apt-repository ppa:docker-ce/stable
-        sudo apt-get update
-        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-        sudo mkdir -p /etc/systemd/system/cri-docker.socket.d
-        curl -LO https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.0/cri-dockerd_0.3.0_amd64.deb
-        sudo dpkg -i cri-dockerd_0.3.0_amd64.deb
-        sudo systemctl start cri-docker
-        sudo systemctl enable cri-docker
-        rm cri-dockerd_0.3.0_amd64.deb
+        sudo apt-get install -y golang-go
+        git clone https://github.com/Mirantis/cri-dockerd.git
+        cd cri-dockerd
+        mkdir bin
+        go get && go build -o bin/cri-dockerd
+        sudo cp bin/cri-dockerd /usr/local/bin/
+        sudo mkdir -p /etc/systemd/system/cri-docker.service.d
+        sudo cp packaging/systemd/cri-docker.service /etc/systemd/system/
+        sudo cp packaging/systemd/cri-docker.socket /etc/systemd/system/
+        sudo systemctl daemon-reload
+        sudo systemctl enable cri-docker.service
+        sudo systemctl enable cri-docker.socket
+        sudo systemctl start cri-docker.service
+        cd ..
+        rm -rf cri-dockerd
 
     - name: Start Minikube
       run: |
-        sudo minikube start --driver=none
+        sudo minikube start --driver=none --container-runtime=cri-dockerd
         sudo chown -R $USER ~/.minikube
         sudo chgrp -R $USER ~/.minikube
         minikube status
