@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wisecow-deployment
+  name: wisecow
   namespace: default
 spec:
   replicas: 1
@@ -15,31 +15,8 @@ spec:
         app: wisecow
     spec:
       containers:
-        - name: wisecow-container
-          image: hritik1706/wisecow:lts
+        - name: wisecow
+          image: 058264408187.dkr.ecr.ap-south-1.amazonaws.com/wisecow:1.1
+          imagePullPolicy: Always
           ports:
             - containerPort: 4499
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 4499
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 4499
-            initialDelaySeconds: 15
-            periodSeconds: 20
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-
-                 
-
-
-                
