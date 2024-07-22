@@ -26,4 +26,4 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: username/wisecow-app:latest
+        tags: hritik1706/wisecow:lts
