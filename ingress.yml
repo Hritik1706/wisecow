@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wisecow-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - a641bbe32f9e44fb090cf63ca08615a0-1007038410.ap-south-1.elb.amazonaws.com
+    secretName: wisecow-tls-secret
+  rules:
+  - host: a641bbe32f9e44fb090cf63ca08615a0-1007038410.ap-south-1.elb.amazonaws.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wisecow
+            port:
+              number: 80
